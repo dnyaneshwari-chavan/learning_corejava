@@ -1,0 +1,10 @@
+public class If {
+    public static void main(string[] args) {
+        int age = 10;
+        if(age >= 18) {
+            System.out.println("Adult");
+        }else{
+            System.out.println("Minor");  
+        }
+    }
+}
