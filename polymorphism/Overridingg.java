@@ -52,7 +52,6 @@ class TemporaryEmployee extends Employee {
     int daysWorked;
     double dailyRate;
 
-    @Override
     public double calculateSalary() {
         return daysWorked * dailyRate;
     }
