@@ -1,117 +1,116 @@
 import java.util.Scanner;
 
-public class PaymentGatewayExample{
+public class PaymentGatewayExample {
     public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
 
+        System.out.println("Select payment method: 1. Credit card  2. UPI  3. Net banking");
+        int choice = sc.nextInt();
 
-        Scanner sc = new Scanner (System.in);
-
-        System.out.println("select payment Method : 1.Credit card 2. UPi 3. Net banking");
-
-        int choice = sc. nextInt();
-        System.out.println("Enter amount");
-
+        System.out.println("Enter amount:");
         double amount = sc.nextDouble();
+        sc.nextLine(); // Consume the leftover newline
 
-        sc.nextLine();
-        Ipayment payment;
+        Payment payment;
 
-        switch(choice){
+        switch (choice) {
             case 1:
-                System.out.println("Enter Credit Number ");
-                String cardnumber = sc.nextLine();
-                payment = new CreditCardPayment(cardnumber);
+                System.out.println("Enter credit card number:");
+                payment = new CreditCardPayment(sc.nextLine());
                 break;
 
-             case 2:
-                  System.out.println("Enter upiId ");
-                String upiId = sc.nextLine();
-                payment = new UpiPayment(upiId);
+            case 2:
+                System.out.println("Enter UPI ID:");
+                payment = new UpiPayment(sc.nextLine());
                 break;
 
-                case 3:
-                  System.out.println("Enter userId ");
-                String userId = sc.nextLine();
-                payment = new Netbanking(userId);
+            case 3:
+                System.out.println("Enter user ID:");
+                payment = new NetbankingPayment(sc.nextLine());
                 break;
 
-                default:
-                    System.out.println("Invalid choice!!");
-                    sc.close();
-                    return ;
+            default:
+                System.out.println("Invalid choice!");
+                sc.close();
+                return;
         }
 
-        PaymentService  service = new PaymentService(payment);
-      
-        
+        PaymentService service = new PaymentService(payment);
+        service.executePayment(amount);
+
+        sc.close();
     }
 }
 
-interface Ipayment {
-    void PaymentProcess(double amount);
-    void generateReceipt();
+abstract class Payment {
+    public abstract void processPayment(double amount);
+
+    public abstract void generateReceipt();
 }
 
-class CreditCardPayment implements Ipayment {
-    String cardNumber;
-
+class CreditCardPayment extends Payment {
+    private final String cardNumber;
 
     public CreditCardPayment(String cardNumber) {
         this.cardNumber = cardNumber;
     }
-    @Override 
-    public void PaymentProcess(double amount) {
+
+    @Override
+    public void processPayment(double amount) {
         System.out.println("Card payment: Rs " + amount + " using card " + cardNumber);
     }
-    @Override 
+
+    @Override
     public void generateReceipt() {
         System.out.println("Credit card receipt generated.");
     }
 }
 
-class UpiPayment implements Ipayment {
-    String upiId;
+class UpiPayment extends Payment {
+    private final String upiId;
 
     public UpiPayment(String upiId) {
         this.upiId = upiId;
     }
-    @Override 
-    public void PaymentProcess(double amount) {
+
+    @Override
+    public void processPayment(double amount) {
         System.out.println("UPI payment: Rs " + amount + " using UPI ID " + upiId);
     }
 
-    @Override 
+    @Override
     public void generateReceipt() {
         System.out.println("UPI receipt generated.");
     }
 }
 
-class Netbanking implements Ipayment {
-    String bankName;
+class NetbankingPayment extends Payment {
+    private final String userId;
 
-    public Netbanking(String bankName) {
-        this.bankName = bankName;
+    public NetbankingPayment(String userId) {
+        this.userId = userId;
     }
-    @Override 
-    public void PaymentProcess(double amount) {
-        System.out.println("Netbanking payment: Rs " + amount+ " through " + bankName);
+
+    @Override
+    public void processPayment(double amount) {
+        System.out.println("Net banking payment: Rs " + amount + " for user " + userId);
     }
-    @Override 
+
+    @Override
     public void generateReceipt() {
-        System.out.println("Netbanking receipt generated.");
+        System.out.println("Net banking receipt generated.");
     }
 }
 
-class PaymentService{
-    private Ipayment payment;
+class PaymentService {
+    private final Payment payment;
 
-    public PaymentService(Ipayment payment){
+    public PaymentService(Payment payment) {
         this.payment = payment;
     }
 
-    public void executePayment(double amount){
-        payment.PaymentProcess(amount);
+    public void executePayment(double amount) {
+        payment.processPayment(amount);
         payment.generateReceipt();
     }
-
 }
